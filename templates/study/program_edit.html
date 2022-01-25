@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Редактирование программы
+    <a href="{% url 'program_detail' student.SID %}"
+       class="btn btn-sm btn-info dropdown-toggle waves-effect waves-light pull-right">
+        Программа
+    </a>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success"> Сохранить </button>
+    </form>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <div class="container text-center" style="width:30%">
+        <h3> Вы вышли из системы </h3>
+        <a href="{% url 'login' %}"
+           class="btn btn-lg btn-info btn-rounded dropdown-toggle waves-effect waves-light">
+            Войти снова
+        </a>
+    </div>
+{% endblock %}

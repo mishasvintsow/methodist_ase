@@ -1,0 +1,98 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Информация о модуле
+    <a href="{% url 'module_make_plots' module.MID %}"
+       class="btn btn-info btn-sm dropdown-toggle waves-effect waves-light pull-right">
+        <i class="fa fa-refresh"></i>
+        Обновить графики
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Общая информация</div>
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <td class="col-2"> {{ module.MID }}</td>
+                </tr>
+                <tr>
+                    <th> Тема</th>
+                    <td> {{ module.topic.name }}</td>
+                </tr>
+                <tr>
+                    <th> Статус</th>
+                    <td> {{ module.get_status_display }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-8">
+            {% if module.moduleparam.get_plot_DCR is not None %}
+                <img src="{% static module.moduleparam.get_plot_DCR %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+            {% if module.moduleparam.get_plot_RPRT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RPRT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-8">
+            {% if module.moduleparam.get_plot_RMCAT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCAT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+            {% if module.moduleparam.get_plot_RMCRT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCRT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-8">
+            {% if module.moduleparam.get_plot_RRCRtoCA is not None %}
+                <img src="{% static module.moduleparam.get_plot_RRCRtoCA %}"
+                     class="img-fluid img-thumbnail m-t-10 m-b-10" style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+            {% if module.moduleparam.get_plot_RMCAtoPR is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCAtoPR %}"
+                     class="img-fluid img-thumbnail m-t-10 m-b-10" style="width:45%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:45%">
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

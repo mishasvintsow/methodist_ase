@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block head %}
+    Задания на модерации
+{% endblock %}
+
+{% block content %}
+    <table class="display table table-hover table-sm">
+        <thead>
+        <tr>
+            <th class="col-md-1"></th>
+            <th class="col-md-1">Код</th>
+            <th class="col-md-4">Задание</th>
+            <th class="col-md-2">Ответ</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        {% for task in tasks %}
+            <tr>
+                <td>
+                    <a href="{% url 'task_detail' task.code %}"
+                       class="btn dropdown-toggle waves-effect waves-light pull-center">
+                        <i class="fa fa-2x fa-edit" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td>{{ task.code }} </td>
+                <td>
+                    {% if task.image %}
+                        <div class="w-100"><img src="{{ task.image.url }}" class="img-fluid img-thumbnail"></div>
+                    {% else %}
+                        <div class="w-100"><img src="{% static '/images/blank.jpg' %}" class="img-fluid img-thumbnail">
+                        </div>
+                    {% endif %}
+                </td>
+                <td>{{ task.get_answer }} </td>
+                <td>
+                    <a href="{% url 'task_moderation' task.code %}"
+                       class="btn btn-success dropdown-toggle waves-effect waves-light pull-right" {% if task.moderation_status == 'c' %} disabled {% endif %}>
+                        Проверено!
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

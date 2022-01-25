@@ -1,0 +1,36 @@
+from django.urls import path
+
+from domain import views
+
+urlpatterns = [
+    path('', views.DomainIndexView.as_view(), name='domain_index'),
+    path('courses/', views.CoursesListView.as_view(), name='courses_list'),
+    path('courses/add/', views.CourseCreateView.as_view(), name='course_create'),
+    path('courses/<int:code>/', views.CourseDetailView.as_view(), name='course_detail'),
+    path('courses/<int:code>/delete', views.CourseDeleteView.as_view(), name='course_delete'),
+    path('courses/<int:code>/topics', views.TopicsListView.as_view(), name='topics_list'),
+    path('courses/<int:code>/edit/', views.CourseUpdateView.as_view(), name='course_update'),
+    path('courses/<int:code>/topics/', views.TopicsListView.as_view(), name='course_topics_list'),
+    path('topics/', views.TopicsListView.as_view(), name='topics_list'),
+    path('topics/add/', views.TopicCreateView.as_view(), name='topic_create'),
+    path('topics/<int:code>/', views.TopicDetailView.as_view(), name='topic_detail'),
+    path('topics/<int:code>/delete', views.TopicDeleteView.as_view(), name='topic_delete'),
+    path('topics/<int:code>/edit/', views.TopicUpdateView.as_view(), name='topic_update'),
+    path('topics/<int:code>/tasks/', views.TasksListView.as_view(), name='topic_tasks_list'),
+    path('tasks/', views.TasksListView.as_view(), name='tasks_list'),
+    path('tasks/moderation', views.ModerationTasksListView.as_view(), name='moderation_tasks_list'),
+    path('tasks/add/', views.TaskCreateView.as_view(), name='task_create'),
+    path('tasks/<int:code>/', views.TaskDetailView.as_view(), name='task_detail'),
+    path('tasks/<int:code>/delete', views.TaskDeleteView.as_view(), name='task_delete'),
+    path('tasks/<int:code>/moderation', views.TaskModerationView.as_view(), name='task_moderation'),
+    path('tasks/<int:code>/edit/', views.TaskUpdateView.as_view(), name='task_update'),
+    path('tasks/<int:code>/solve/', views.TaskSolveView.as_view(), name='task_solve'),
+    path('tasks/<int:code>/edit/answers/', views.AnswersUpdateView.as_view(), name='answers_update'),
+    path('topics/upload/xls/', views.TopicsFileUploadView.as_view(), name='topics_xls_upload'),
+    path('topics/upload/xls/check', views.TopicsFileCheckView.as_view(), name='topics_upload_check'),
+    path('tasks/upload/xls/', views.TasksFileUploadView.as_view(), name='tasks_xls_upload'),
+    path('tasks/upload/xls/check', views.TasksFileCheckView.as_view(), name='tasks_upload_check'),
+    path('answers/', views.AnswersListView.as_view(), name='answers_list'),
+    path('answers/upload/xls/', views.AnswersFileUploadView.as_view(), name='answers_xls_upload'),
+    path('images/upload', views.TaskImagesUploadView.as_view(), name='task_images_upload'),
+]

@@ -1,0 +1,84 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Результаты теста #{{ test.TID }}
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-4">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <td class="col-2"> {{ test.TID }}</td>
+                </tr>
+                <tr>
+                    <th> Ученик</th>
+                    <td> {{ test.student.user.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th> Статус</th>
+                    <td> {{ test.get_status_display }}</td>
+                </tr>
+                <tr>
+                    <th> </th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="m-0 m-t-40">
+        {% for unit, items in units_items %}
+            <div class="h3"> {{ unit.module.topic.name }} [{{ unit.get_status_display }}]</div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2"> #</th>
+                    <th class="col-2"> Задание</th>
+                    <th class="col-2"> Ответ</th>
+                    <th class="col-2"> Правильный ответ</th>
+                    <th class="col-2"> Результат</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td> {{ item.IID }} </td>
+                        <td>
+                            {% if item.task.image %}
+                                <div class="w-100"><img src="{{ item.task.image.url }}" class="img-fluid img-thumbnail">
+                                </div>
+                            {% else %}
+                                <div class="w-100"><img src="{% static '/images/blank.jpg' %}"
+                                                        class="img-fluid img-thumbnail">
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td> {{ item.response|default_if_none:"-" }} </td>
+                        <td> {{ item.task.get_answer }} </td>
+                        <td>
+                            {% if item.valid is None %}
+                                <i class="fa fa-3x fa-question text-warning" aria-hidden="true"></i>
+                            {% elif item.valid %}
+                                <i class="fa fa-3x fa-check text-success" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-3x fa-times text-danger" aria-hidden="true"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+    {% if test.time_open is None %}
+        <a href="{% url 'test_units_update' test.TID %}" class="btn btn-primary"> Настроить тест </a>
+        <a href="{% url 'test_units_edit' test.TID %}" class="btn btn-primary"> Редактировать список тем </a>
+        <a href="{% url 'test_open' test.TID %}" class="btn btn-warning"> Открыть тест </a>
+    {% endif %}
+{% endblock %}

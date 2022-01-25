@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Попытка решения задания
+{% endblock %}
+
+{% block content %}
+    <div class="text-center h4">
+        {{ task.topic.name }}
+    </div>
+    <div class="container">
+        {% for answer in task.answer_set.all %}
+            <div>{{ answer.get_answer_type_display }}: {{ answer.text }}</div>
+        {% empty %}
+            Ответы отсутствуют
+        {% endfor %}
+    </div>
+    <div class="container col-md-12">
+        {{ task.description }}
+        {% if task.image %}
+            <div class="w-100"><img src="{{ task.image.url }}" class="img-fluid img-thumbnail"></div>
+        {% else %}
+            <div class="w-100"><img src="{% static '/images/blank.jpg' %}" class="img-fluid img-thumbnail"></div>
+        {% endif %}
+    </div>
+    <div class="container col-md-12 m-t-20">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-dismissible alert-success">
+                    <button type="button" class="close" data-dismiss="alert">
+                        ×
+                    </button>
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="row container col-md-12 m-0 m-t-20">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-success"> Отправить ответ</button>
+        </form>
+    </div>
+{% endblock %}

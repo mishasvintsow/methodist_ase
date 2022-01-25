@@ -1,0 +1,79 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Список тем {% if course is not None %} по курсу {{ course }} {% endif %}
+    <a href="{% url 'topic_create' %}"
+       class="btn btn-warning btn-sm dropdown-toggle waves-effect waves-light pull-right">
+        <i class="fa fa-plus"></i>
+        Добавить
+    </a>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-sm table-hover table-striped table-responsive">
+        <thead>
+        <tr>
+            <th class="col-md-auto" style="width: 1%"></th>
+            <th class="col-md-1 text-center"> Код</th>
+            {% if course is None %}
+                <th class="col-md-1"> Курс</th>
+            {% endif %}
+            <th class="col-md-1 text-center"> Класс</th>
+            <th class="col-md-7"> Название</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for topic in topics %}
+            <tr>
+                <td class="text-center">
+                    <a href="{% url 'topic_detail' topic.code %}"
+                       class="btn btn-xs dropdown-toggle waves-effect waves-light pull-left">
+                        <i class="fa fa-2x fa-info" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td class="text-center">{{ topic.code }}</td>
+                {% if course is None %}
+                    <td class="col-md-1"> {{ topic.course.name }}</td>
+                {% endif %}
+                <td class="text-center">{{ topic.grade }}</td>
+                <td>{{ topic.name }}</td>
+                <td class="text-center">
+                    <a href="{% url 'topic_tasks_list' topic.code %}"
+                       class="btn btn-primary dropdown-toggle waves-effect waves-light pull-left">
+                        Задания
+                    </a>
+                    <button type="button"
+                            class="btn btn-danger dropdown-toggle waves-effect waves-light pull-center"
+                            data-toggle="modal" data-target="#delete_confirm_{{ topic.code }}">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </td>
+
+                <div class="modal fade" id="delete_confirm_{{ topic.code }}" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Вы подтверждаете удаление темы?</h5>
+                            </div>
+                            <div class="modal-body">
+                                Все связанные объекты будут также удалены!
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                </button>
+                                <a href="{% url 'topic_delete' topic.code %}" class="btn btn-danger">
+                                    Подтвердить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

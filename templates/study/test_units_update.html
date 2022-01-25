@@ -1,0 +1,84 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Настройка теста
+    <a href="{% url 'test_units_edit' test.TID %}"
+       class="btn btn-primary btn-sm waves-effect waves-light pull-right">
+        <i class="fa fa-gears"></i>
+        Редактировать список тем
+    </a>
+{% endblock %}
+
+{% block content %}
+    <script>
+        function move_row_up(form_id_a, num_rows) {
+            var form_id = parseInt(form_id_a);
+            var table = document.getElementById("units_table");
+            var current_row = document.getElementById("tr_id_" + form_id);
+            var current_order = parseInt(current_row.getElementsByTagName("input")[3].value);
+            if (current_order > 1) {
+                var prev_row = table.rows[current_row.rowIndex - 1];
+                current_row.getElementsByTagName("input")[3].value = current_order - 1;
+                prev_row.getElementsByTagName("input")[3].value = current_order;
+                prev_row.parentNode.insertBefore(current_row, prev_row);
+            }
+
+        }
+
+        function move_row_down(form_id_a, num_rows) {
+            var form_id = parseInt(form_id_a);
+            var table = document.getElementById("units_table");
+            var current_row = document.getElementById("tr_id_" + form_id);
+            var current_order = parseInt(current_row.getElementsByTagName("input")[3].value);
+            if (current_order < parseInt(num_rows)) {
+                var next_row = table.rows[current_row.rowIndex + 1];
+                current_row.getElementsByTagName("input")[3].value = current_order + 1;
+                next_row.getElementsByTagName("input")[3].value = current_order;
+                next_row.parentNode.insertBefore(next_row, current_row);
+            }
+
+        }
+    </script>
+    <form method="post">
+        {{ formset.management_form|crispy }}
+        {% csrf_token %}
+        {{ form|crispy }}
+        <table id="units_table" class="table table-sm">
+            <thead>
+            <tr>
+                <th class="col-6"> Тема</th>
+                <th class="col-2"> Статус</th>
+                <th class="col-2"> Продолжительность</th>
+                <th class="col-2"> Минимум задач</th>
+                <th class="col-2"> Порядок</th>
+                <th class="col-2"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for unit_form in formset %}
+                <tr id="tr_id_{{ unit_form.id.value }}">
+                    <td> {{ unit_form.id }}{{ unit_form.instance.module.topic }} </td>
+                    {% include 'bootstrap/field.html' with tag="td" field=unit_form.status form_show_labels=False %}
+                    {% include 'bootstrap/field.html' with tag="td" field=unit_form.duration form_show_labels=False %}
+                    {% include 'bootstrap/field.html' with tag="td" field=unit_form.min_item form_show_labels=False %}
+                    <td style="text-align: center; color: #797979"
+                        id="td_id_{{ unit_form.instance.order }}"> {{ unit_form.order.as_hidden }}
+                        <input id="btn_down_{{ unit_form.id.value }}"
+                               type="button"
+                               value="&#9660;"
+                               onclick="move_row_down({{ unit_form.id.value }}, {{ formset.management_form.initial.INITIAL_FORMS }});"/>
+                        <input id="btn_up_{{ unit_form.id.value }}"
+                               type="button"
+                               value="&#9650;"
+                               onclick="move_row_up({{ unit_form.id.value }}, {{ formset.management_form.initial.INITIAL_FORMS }});"/>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success"> Сохранить изменения</button>
+    </form>
+{% endblock %}
+

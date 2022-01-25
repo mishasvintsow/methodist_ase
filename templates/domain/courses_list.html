@@ -1,0 +1,76 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Список курсов
+    <a href="{% url 'course_create' %}"
+       class="btn btn-warning btn-sm dropdown-toggle waves-effect waves-light pull-right">
+        <i class="fa fa-plus"></i>
+        Добавить
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="row container m-0">
+        <div class="col-md-6">
+            <table class="table table-hover table-responsive">
+                <thead>
+                <tr>
+                    <th class="col-md-auto" style="width: 1%"></th>
+                    <th class="col-md-1"> Код</th>
+                    <th class="col-md-3"> Название</th>
+                    <th class="col-md-1"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for course in courses %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'course_detail' course.code %}"
+                               class="btn btn-xs dropdown-toggle waves-effect waves-light pull-left">
+                                <i class="fa fa-2x fa-info" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                        <td>{{ course.code }}</td>
+                        <td>{{ course.name }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'topics_list' course.code %}"
+                               class="btn btn-primary dropdown-toggle waves-effect waves-light pull-left">
+                                Темы
+                            </a>
+                            <button type="button"
+                                    class="btn btn-danger dropdown-toggle waves-effect waves-light pull-center"
+                                    data-toggle="modal" data-target="#delete_confirm_{{ course.code }}">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+
+                        <div class="modal fade" id="delete_confirm_{{ course.code }}" tabindex="-1" role="dialog"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Вы подтверждаете удаление
+                                            курса?</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        Все связанные объекты будут также удалены!
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                        </button>
+                                        <a href="{% url 'course_delete' course.code %}" class="btn btn-danger">
+                                            Подтвердить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

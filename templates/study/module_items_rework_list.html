@@ -1,0 +1,73 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Задания для разбора
+{% endblock %}
+
+{% block content %}
+    {% for status, items in items_groups %}
+        <div class="h2"> {{ status }}</div>
+        <div class="m-0 m-t-40 m-b-30">
+            <table class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th class="col-md-1 text-center"> #</th>
+                    <th class="col-md-3 text-center"> Задание</th>
+                    <th class="col-md-2 text-center"> Ответ</th>
+                    <th class="col-md-2 text-center"> Правильный ответ</th>
+                    <th class="col-md-2 text-center"> Результат</th>
+                    <th class="col-md-4 text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td class="text-center"> {{ item.IID }} </td>
+                        <td>
+                            {% if item.task.image %}
+                                <div class="w-100"><img src="{{ item.task.image.url }}" class="img-fluid img-thumbnail">
+                                </div>
+                            {% else %}
+                                <div class="w-100"><img src="{% static '/images/blank.jpg' %}"
+                                                        class="img-fluid img-thumbnail img-responsive">
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center"> {{ item.response|default_if_none:"-" }} </td>
+                        <td class="text-center"> {{ item.task.get_answer }} </td>
+                        <td class="text-center">
+                            {% if item.response is None %}
+                                <i class="fa fa-3x fa-question text-warning" aria-hidden="true"></i>
+                            {% elif item.valid %}
+                                <i class="fa fa-3x fa-check text-success" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-3x fa-times text-danger" aria-hidden="true"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if item.analysis != 'd' %}
+                                <a href="{% url 'item_rework' item.IID %}" class="btn btn-sm btn-success">
+                                    Разобрано
+                                </a>
+                            {% endif %}
+                            {% if not item.valid %}
+                                <a href="{% url 'item_review_valid' item.IID %}" class="btn btn-sm btn-success">
+                                    Засчитать
+                                </a>
+                            {% endif %}
+                            {% if item.task.moderation_status == 'u' %}
+                                <a href="{% url 'item_to_moderation' item.IID %}" class="btn btn-sm btn-warning m-t-5">
+                                    Отправить на модерацию
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+{% endblock %}

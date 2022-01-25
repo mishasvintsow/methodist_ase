@@ -1,0 +1,19 @@
+tr.lightpink { 
+    background: #FADADD; 
+    color: white; 
+}
+
+tr.darkpink { 
+    background: #FFB6C1; 
+    color: white; 
+}
+
+tr.lightgreen { 
+    background: #98FB98; 
+    color: white; 
+}
+
+tr.white { 
+    background: #FFFFFF; 
+    color: white; 
+}

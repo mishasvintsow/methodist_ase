@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Банк знаний
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <h1> Курсы </h1>
+        <a href="{% url 'courses_list' %}" class="btn btn-info"> Список курсов </a>
+        <a href="{% url 'course_create' %}" class="btn btn-primary"> Добавить курс </a>
+    </div>
+    <div class="container m-0 m-t-30">
+        <h1> Темы </h1>
+        <a href="{% url 'topics_list' %}" class="btn btn-info"> Список тем </a>
+        <a href="{% url 'topic_create' %}" class="btn btn-primary"> Добавить тему </a>
+        <a href="{% url 'topics_xls_upload' %}" class="btn btn-purple"> Загрузить из xls </a>
+    </div>
+    <div class="container m-0 m-t-30">
+        <h1> Задания </h1>
+        <a href="{% url 'tasks_list' %}" class="btn btn-info"> Список заданий </a>
+        <a href="{% url 'task_create' %}" class="btn btn-primary"> Добавить задание </a>
+        <a href="{% url 'tasks_xls_upload' %}" class="btn btn-purple"> Загрузить из xls </a>
+        <a href="{% url 'task_images_upload' %}" class="btn btn-purple"> Загрузить архив с изображениями </a>
+    </div>
+    <div class="container m-0 m-t-30">
+        <h1> Ответы </h1>
+        <a href="{% url 'answers_list' %}" class="btn btn-info"> Список ответов </a>
+        <a href="{% url 'answers_xls_upload' %}" class="btn btn-primary"> Загрузить из xls </a>
+    </div>
+{% endblock %}

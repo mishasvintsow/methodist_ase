@@ -1,0 +1,118 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    <div class="container m-0 p-0" style="width: 100%">
+        <div class="col-md-4 pull-left">
+            Выполнение теста
+        </div>
+        <div class="col-md-4 text-center" id="timer_task" style="font-size: x-large; font-weight: bold">
+            {% if minutes >= 0 and seconds >= 0 %}
+                {{ minutes|stringformat:"02d" }}:{{ seconds|stringformat:"02d" }}
+            {% elif task_left > 0 %}
+                Для завершения осталось {{ task_left }}.
+            {% endif %}
+        </div>
+        <div class="col-md-4 pull-right">
+            {% if item.unit.test.practice %}
+                <a href="{% url 'student_test_complete' item.unit.test.TID %}"
+                   class="btn btn-danger btn-sm dropdown-toggle waves-effect waves-light pull-right">
+                    Завершить
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="text-center h4">
+        {{ item.unit.module.topic.name }}
+        ({{ item.unit.order }}/{{ item.unit.test.units.count }})
+    </div>
+    <div class="container col-md-4">
+        {% if item.task.image %}
+            <div class="w-100"><img src="{{ item.task.image.url }}" class="img-fluid img-thumbnail"></div>
+        {% else %}
+            <div class="w-100"><img src="{% static '/images/blank.jpg' %}" class="img-fluid img-thumbnail"></div>
+        {% endif %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success"> Отправить ответ</button>
+        {% if form.instance.attempts != 0 %}
+            Попыток ввести ответ: {{ form.instance.attempts|add:1 }}. После 3 попыток будет предложено следующее задание
+        {% endif %}
+    </form>
+    <div class="m-t-10">
+        <a href="{% url 'student_item_difficult' item.IID %}"
+           class="btn btn-warning btn-sm waves-effect waves-light pull-left">
+            <i class="fa fa-question" aria-hidden="true"></i>
+            Затрудняюсь ответить
+        </a>
+    </div>
+    {% if request.user.is_moderator %}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th class="col-2"> #</th>
+                <th class="col-2"> Код</th>
+                <th class="col-6"> Тема</th>
+                <th class="col-2"> Ответ</th>
+                <th class="col-2"> Правильный</th>
+                <th class="col-2"> Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    <td> {{ item.IID }} </td>
+                    <td> {{ item.task.code }} </td>
+                    <td> {{ item.unit.module.topic }} </td>
+                    <td> {{ item.response|default_if_none:"-" }} </td>
+                    <td> {{ item.task.get_answer }} </td>
+                    <td> {{ item.get_status_display }} </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <script type="text/javascript">
+        var after = document.getElementById("timer_task");
+        var minutes = parseInt({{ minutes }});
+        var seconds = parseInt({{ seconds }});
+        var totalSeconds = minutes * 60 + seconds - 1;
+        var result = {% if result is None %} false {% else %} true {% endif %};
+        var task = parseInt({{ task_left }});
+        timer = setInterval(setTime, 1000);
+
+        function setTime() {
+            if (totalSeconds > 0) {
+                after.innerHTML = pad(parseInt(totalSeconds / 60)) + ":" + pad(totalSeconds % 60) + "</b>";
+                if (result) {
+                    clearInterval(timer);
+                }
+                --totalSeconds;
+            } else {
+                if (task < 0) {
+                    after.innerHTML = "00:00";
+                } else {
+                    after.innerHTML = "Для завершения осталось {{ task_left }}.";
+                }
+                clearInterval(timer);
+            }
+
+        }
+
+        function pad(val) {
+            var valString = val + "";
+            if (valString.length < 2) {
+                return "0" + valString;
+            } else {
+                return valString;
+            }
+        }
+    </script>
+{% endblock %}

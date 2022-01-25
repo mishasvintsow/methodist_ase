@@ -1,0 +1,75 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+{% load extra_tags %}
+
+{% block head %}
+    Проверка загруженного файла
+{% endblock %}
+
+{% block content %}
+    {% if file_exist %}
+        <form method="post">
+            {{ form.management_form|crispy }}
+            {% csrf_token %}
+
+            <h2> Задания с совпадающим кодом, но имеющие отличия </h2>
+            <table class="table table-hover table-striped table-responsive table-sm">
+                <colgroup>
+                    <col style="width:10%">
+                    <col style="width:40%">
+                    <col style="width:10%">
+                    <col style="width:30%">
+                    <col style="width:10%">
+                    <col style="width:10%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th> code</th>
+                    <th> topic</th>
+                    <th> group</th>
+                    <th> description</th>
+                    <th> expert_level</th>
+                    <th> learning</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for task_form, instance in form|zip:instances %}
+                    <tr>
+                        <td>
+                            <text>{{ instance.code }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.topic }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.group }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.description }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.get_expert_level_display }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.learning }}</text>
+                        </td>
+                    </tr>
+                    {% if task_form.errors %}
+                        <tr>
+                            <td> {% for e in task_form.non_field_errors %} {{ e }} {% endfor %}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% for field in task_form %}
+                            {% include 'bootstrap/field.html' with tag="td" form_show_labels=False %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-success"> Сохранить изменения</button>
+        </form>
+    {% else %}
+        Файл не загружен
+    {% endif %}
+{% endblock %}

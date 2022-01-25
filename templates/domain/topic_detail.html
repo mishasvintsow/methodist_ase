@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Информация о теме
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-1"> Код</th>
+                    <td class="col-5"> {{ topic.code }}</td>
+                </tr>
+                <tr>
+                    <th> Курс</th>
+                    <td> {{ topic.course.name }}</td>
+                </tr>
+                <tr>
+                    <th> Класс</th>
+                    <td> {{ topic.grade }}</td>
+                </tr>
+                <tr>
+                    <th> Название</th>
+                    <td> {{ topic.name }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container m-0 m-t-20">
+        <a href="{% url 'topic_update' topic.code %}" class="btn btn-primary"> Редактировать тему </a>
+    </div>
+{% endblock %}

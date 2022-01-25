@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Программа
+{% endblock %}
+
+
+{% block content %}
+    <table class="table table-sm table-hover">
+        <thead>
+        <tr>
+            <th class="col-1" rowspan="2"></th>
+            <th class="col-md-4 align-middle" rowspan="2"> Тема</th>
+            <th class="col-md-2 text-center" rowspan="2"> Статус</th>
+            <th class="col-md-2 text-center" colspan="2"> Изучение</th>
+            <th class="col-md-2 text-center" colspan="2"> Практика</th>
+            <th class="col-md-1 text-center" rowspan="2"></th>
+        </tr>
+        <tr>
+            <th class="text-center"> глубина</th>
+            <th class="text-center"> правильность</th>
+            <th class="text-center"> сложность</th>
+            <th class="text-center"> правильность</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for module in program %}
+            <tr style="background: {{ module.moduleparam.get_color_display }}">
+                <td class="text-center">
+                    <a href="{% url 'student_module_detail' module.MID %}"
+                       class="btn btn-xs dropdown-toggle waves-effect waves-light pull-center">
+                        <i class="fa fa-lg fa-info" aria-hidden="true"></i></i>
+                    </a>
+                </td>
+                <td> {{ module.topic.name }} </td>
+                <td class="text-center"> {{ module.get_status_display }} </td>
+                <td class="text-center"> {{ module.moduleparam.LPEG|default_if_none:"-" }} </td>
+                <td class="text-center"> {{ module.moduleparam.LPRT|default_if_none:"-" }} </td>
+                <td class="text-center"> {{ module.moduleparam.last_unit_RMCAT|default_if_none:"-" }} </td>
+                <td class="text-center"> {{ module.moduleparam.last_unit_RPRT|default_if_none:"-" }} </td>
+                <td><a href="{% url 'student_practice_start' module.MID %}" class="btn btn-sm btn-warning">
+                                    Практиковаться </a> </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

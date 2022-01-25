@@ -1,0 +1,101 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Учебный процесс
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-4 text-center">
+            <h2> Предстоящие тесты </h2>
+            <table class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2 text-center"> Код</th>
+                    <th class="col-4 text-center"> Успеть до</th>
+                    <th class="col-2 text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for test in tests_future %}
+                    <tr>
+                        <td> {{ test.TID }} </td>
+                        <td> {{ test.time_close }} </td>
+                        <td>
+                            {% if test.status == 'o' %}
+                                <a href="{% url 'student_test_detail' test.TID %}" class="btn btn-sm btn-primary"> Начать </a>
+                            {% else %}
+                                <a href="{% url 'student_test_detail' test.TID %}" class="btn btn-sm btn-info"> Продолжить </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 text-center">
+            <h2> Завершенные тесты </h2>
+            <table class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2 text-center"> Код</th>
+                    <th class="col-6 text-center"> Завершен</th>
+                    <th class="col-2 text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for test in tests_pass %}
+                    <tr>
+                        <td> {{ test.TID }} </td>
+                        <td>
+                            {% if test.time_finish is not None %}
+                                {{ test.time_finish }}
+                            {% else %}
+                                {{ test.time_close }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if test.time_finish is not None %}
+                                <a href="{% url 'student_test_result' test.TID %}" class="btn btn-sm btn-primary">
+                                    Результаты </a>
+                            {% else %}
+                                <a href="{% url 'student_test_detail' test.TID %}" class="btn btn-sm btn-info"> Детали </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 text-center">
+            <h2> Практики </h2>
+            <table class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <th class="col-6"> Выполнялись</th>
+                    <th class="col-2"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for test in practices %}
+                    <tr>
+                        <td> {{ test.TID }} </td>
+                        <td> {{ test.time_open }} </td>
+                        <td>
+                            {% if test.time_finish is not None %}
+                                <a href="{% url 'student_test_result' test.TID %}" class="btn btn-sm btn-primary">
+                                    Результаты </a>
+                            {% else %}
+                                <a href="{% url 'student_test_detail' test.TID %}" class="btn btn-sm btn-info"> Продолжить </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block head %}
+    Информация о задании
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <td class="col-10"> {{ task.code }} </td>
+                </tr>
+                <tr>
+                    <th> Тема</th>
+                    <td> {{ task.topic }} </td>
+                </tr>
+                <tr>
+                    <th> Группа</th>
+                    <td> {{ task.group }} </td>
+                </tr>
+                <tr>
+                    <th> Экспертная сложность</th>
+                    <td> {{ task.get_expert_level_display }} </td>
+                </tr>
+                <tr>
+                    <th> Уровень</th>
+                    <td> {{ task.taskfeature.task_L|floatformat:3 }} </td>
+                </tr>
+                <tr>
+                    <th> Описание</th>
+                    <td> {{ task.description }} </td>
+                </tr>
+                <tr>
+                    <th> Задание</th>
+                    <td>
+                        {% if task.image %}
+                            <div class="w-100"><img src="{{ task.image.url }}" class="img-fluid img-thumbnail"></div>
+                        {% else %}
+                            <div class="w-100"><img src="{% static '/images/blank.jpg' %}"
+                                                    class="img-fluid img-thumbnail">
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th> Ответ</th>
+                    <td>
+                        {% for answer in task.answer_set.all %}
+                            <div>{{ answer.get_answer_type_display }}: {{ answer.text }}</div>
+                        {% empty %}
+                            Ответы отсутствуют
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th> Изучение</th>
+                    <td> {{ task.learning }}</td>
+                </tr>
+                <tr>
+                    <th> Модерация</th>
+                    <td> {{ task.get_moderation_status_display }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container m-0">
+        <div class="col-md-6 text-center">
+            <a href="{% url 'task_update' task.code %}" class="btn btn-primary"> Редактировать задание </a>
+            <a href="{% url 'answers_update' task.code %}"
+               class="btn btn-primary"> Редактировать ответы </a>
+            <a href="{% url 'task_moderation' task.code %}"
+               class="btn btn-success" {% if task.moderation_status == 'c' %} disabled {% endif %}>
+                Проверено!
+            </a>
+            <a href="{% url 'task_solve' task.code %}"
+               class="btn btn-warning" {% if task.moderation_status == 'c' %} disabled {% endif %}>
+                Попробовать
+            </a>
+        </div>
+    </div>
+{% endblock %}

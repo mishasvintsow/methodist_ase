@@ -1,0 +1,77 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Тест
+{% endblock %}
+
+
+{% block content %}
+    <div class="container p-0 m-0">
+        <div class="col-md-4">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th class="col-2"> Тема</th>
+                    <th class="col-2"> Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for unit in units %}
+                    <tr>
+                        <td> {{ unit.module.topic }} </td>
+                        <td> {{ unit.get_status_display }} </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container">
+        {% if test.time_finish is not None %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2"> #</th>
+                    <th class="col-2"> Код</th>
+                    <th class="col-6"> Тема</th>
+                    <th class="col-2"> Ответ</th>
+                    <th class="col-2"> Правильный</th>
+                    <th class="col-2"> Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td> {{ item.IID }} </td>
+                        <td> {{ item.task.code }} </td>
+                        <td> {{ item.unit.module.topic }} </td>
+                        <td> {{ item.response }} </td>
+                        <td> {{ item.task.get_answer }} </td>
+                        <td> {{ item.get_status_display }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <div class="container text-center">
+        {% if test.time_finish is None and test.time_start is None %}
+            <a href="{% url 'student_test_start' test.TID %}"
+               class="btn btn-lg btn-success btn-rounded dropdown-toggle waves-effect waves-light">
+                <i class="fa fa-road" aria-hidden="true"></i>
+                Старт
+            </a>
+        {% elif test.time_finish is None and test.time_start is not None %}
+            <a href="{% url 'student_test_start' test.TID %}"
+               class="btn btn-lg btn-success btn-rounded dropdown-toggle waves-effect waves-light">
+                <i class="fa fa-road" aria-hidden="true"></i>
+                Продолжить
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

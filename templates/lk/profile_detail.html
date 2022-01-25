@@ -1,0 +1,108 @@
+{% extends "main.html" %}
+
+{% block head %}
+    Карточка пользователя
+    {% if request.user == user and user.is_admin %}
+        <a href="{% url 'become_student' %}" class="btn btn-warning btn-sm waves-effect waves-light pull-right"
+                {% if user.student is not None %} disabled {% endif %}>
+            <i class="fa fa-toggle-on" aria-hidden="true"></i>
+            Стать студентом </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0 m-t-10">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-md-3"> Логин</th>
+                    <td class="col-md-3"> {{ user.username }} </td>
+                </tr>
+                <tr>
+                    <th> Имя</th>
+                    <td> {{ user.get_full_name }} </td>
+                </tr>
+                <tr>
+                    <th> Тип пользователя</th>
+                    <td> {{ user.get_role_display }} </td>
+                </tr>
+                <tr>
+                    <th> Электронная почта</th>
+                    <td> {{ user.email }} </td>
+                </tr>
+                {% if user.has_student_obj %}
+                    <tr>
+                        <th> Индивидуальный номер студента</th>
+                        <td> {{ user.student.SID }} </td>
+                    </tr>
+                    <tr>
+                        <th> Класс</th>
+                        <td> {{ user.student.grade }} </td>
+                    </tr>
+                    <tr>
+                        <th> Преподаватель</th>
+                        <td> {% if user.student.teacher.user.id is not None %}
+                            {{ user.student.teacher }}
+                            <a href="{% url 'profile_detail' user.student.teacher.user.id %}"
+                               class="btn btn-xs dropdown-toggle waves-effect waves-light pull-center">
+                                <i class="fa fa-address-card-o" aria-hidden="true"></i>
+                            </a>
+                        {% else %} - {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th> Пауза</th>
+                        <td>
+                            {% if user.student.pause %}
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if request.user == user and request.user.is_admin %}
+        <div class="container m-0 m-t-10">
+            <a href="{% url 'profile_update' %}"
+               class="btn btn-primary btn-sm waves-effect waves-light pull-left">
+                <i class="fa fa-gears" aria-hidden="true"></i>
+                Редактировать данные пользователя</a>
+        </div>
+        <div class="container m-0 m-t-10">
+            <a href="{% url 'reset_password' %}"
+               class="btn btn-primary btn-sm waves-effect waves-light pull-left">
+                <i class="fa fa-key" aria-hidden="true"></i>
+                Изменить пароль</a>
+        </div>
+    {% endif %}
+    {% if request.user != user and request.user.is_admin %}
+        <div class="container m-0 m-t-10">
+            <a href="{% url 'profile_update' user.pk %}"
+               class="btn btn-primary btn-sm waves-effect waves-light pull-left">
+                <i class="fa fa-gears" aria-hidden="true"></i>
+                Редактировать данные пользователя</a>
+        </div>
+        <div class="container m-0 m-t-10">
+            <a href="{% url 'reset_password' user.pk %}"
+               class="btn btn-primary btn-sm waves-effect waves-light pull-left">
+                <i class="fa fa-key" aria-hidden="true"></i>
+                Изменить пароль</a>
+        </div>
+    {% endif %}
+    {% if user.has_student_obj and request.user.is_admin %}
+        <div class="container m-0 m-t-10">
+            <a href="{% url 'student_update' user.student.SID %}"
+               class="btn btn-info btn-sm waves-effect waves-light pull-left">
+                <i class="fa fa-gears" aria-hidden="true"></i>
+                Редактировать данные студента</a>
+        </div>
+    {% endif %}
+{% endblock %}

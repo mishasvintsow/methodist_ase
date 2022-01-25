@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+
+{% block head %}
+    Список преподавателей
+{% endblock %}
+
+{% block content %}
+    <table class="display table table-hover table-sm center" style="width:100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th> Логин</th>
+            <th> Имя</th>
+            <th> Студенты</th>
+        </tr>
+        </thead>
+        {% for teacher in teachers %}
+            <tr>
+                <td>
+                    <a href="{% url 'profile_detail' teacher.user.id %}"
+                       class="btn btn-xs dropdown-toggle waves-effect waves-light pull-center">
+                        <i class="fa fa-address-card-o" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td>{{ teacher.user.username }} </td>
+                <td>{{ teacher.user.get_full_name }} </td>
+                <td>
+                    {% for student in teacher.students.all %}
+                        <div>
+                            <a href="{% url 'profile_detail' student.user.id %}"
+                               class="btn btn-xs dropdown-toggle waves-effect waves-light pull-center">
+                                <i class="fa fa-address-card-o" aria-hidden="true"></i>
+                                {{ student.user.get_full_name }}
+                            </a>
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Список заданий {% if topic is not None %} по теме {{ topic }} {% endif %}
+    <a href="{% url 'task_create' %}"
+       class="btn btn-warning btn-sm dropdown-toggle waves-effect waves-light pull-right">
+        <i class="fa fa-plus"></i>
+        Добавить
+    </a>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container text-center m-0">
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"> < </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page=1"> 1 </a></li>
+                    <li class="page-item"><span class="page-link"> ... </span></li>
+                {% endif %}
+                <li class="page-item disabled"><a class="page-link" href="#"
+                                                  style="background: #dbdbdb">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><span class="page-link"> ... </span></li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ page_obj.paginator.num_pages }}"> {{ page_obj.paginator.num_pages }} </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}"> > </a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <div>
+        <table class="table table-hover table-striped table-responsive table-sm">
+            <thead>
+            <tr>
+                {% if topic is not None %}
+                    <th style="width: 1%"></th>
+                    <th style="width: 4%" class="text-center"> Код</th>
+                    <th style="width: 5%" class="text-center"> Группа</th>
+                    <th style="width: 5%" class="text-center"> Эксп.</th>
+                    <th style="width: 10%" class="text-center"> Уровень</th>
+                    <th style="width: 30%"> Задание</th>
+                    <th style="width: 20%"> Ответ</th>
+                    <th style="width: 5%" class="text-center"> Изучение</th>
+                    <th style="width: 10%"> Модерация</th>
+                    <th style="width: 10%"></th>
+                {% else %}
+                    <th style="width: 1%"></th>
+                    <th style="width: 4%" class="text-center"> Код</th>
+                    <th style="width: 10%" class="text-center"> Тема</th>
+                    <th style="width: 5%" class="text-center"> Группа</th>
+                    <th style="width: 5%" class="text-center"> Эксп.</th>
+                    <th style="width: 10%" class="text-center"> Уровень</th>
+                    <th style="width: 25%"> Задание</th>
+                    <th style="width: 15%"> Ответ</th>
+                    <th style="width: 5%" class="text-center"> Изучение</th>
+                    <th style="width: 10%"> Модерация</th>
+                    <th style="width: 10%"></th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for task in page_obj %}
+                <tr>
+                    <td class="text-center">
+                        <a href="{% url 'task_detail' task.code %}"
+                           class="btn btn-xs dropdown-toggle waves-effect waves-light pull-left">
+                            <i class="fa fa-2x fa-info" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    <td class="text-center"> {{ task.code }} </td>
+                    {% if topic is None %}
+                        <td> {{ task.topic }} </td>
+                    {% endif %}
+                    <td class="text-center"> {{ task.group }} </td>
+                    <td class="text-center"> {{ task.get_expert_level_display }} </td>
+                    <td class="text-center"> {{ task.taskfeature.task_L|floatformat:3 }} </td>
+                    <td> {{ task.description }}
+                        {% if task.image %}
+                            <div class="w-100"><img src="{{ task.image.url }}" class="img-fluid img-thumbnail"></div>
+                        {% else %}
+                            <div class="w-100"><img src="{% static '/images/blank.jpg' %}"
+                                                    class="img-fluid img-thumbnail">
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for answer in task.answer_set.all %}
+                            <div>{{ answer.get_answer_type_display }}: {{ answer.text }}</div>
+                        {% empty %}
+                            Ответы отсутствуют
+                        {% endfor %}
+                    </td>
+                    <td class="text-center">
+                        {% if task.learning %}
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                        {% else %}
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        {% endif %}
+                    </td>
+                    <td> {{ task.get_moderation_status_display }} </td>
+                    <td>
+                            <a href="{% url 'answers_update' task.code %}"
+                               class="btn btn-primary dropdown-toggle waves-effect waves-light pull-left">
+                                Ответы
+                            </a>
+                        <button type="button"
+                                class="btn btn-danger dropdown-toggle waves-effect waves-light pull-center"
+                                data-toggle="modal" data-target="#delete_confirm_{{ task.code }}">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </td>
+
+
+                    <div class="modal fade" id="delete_confirm_{{ task.code }}" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Вы подтверждаете удаление
+                                        курса?</h5>
+                                </div>
+                                <div class="modal-body">
+                                    Все связанные объекты будут также удалены!
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                    </button>
+                                    <a href="{% url 'task_delete' task.code %}" class="btn btn-danger">
+                                        Подтвердить
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}

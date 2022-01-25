@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    <div class="container m-0 p-0" style="width: 100%">
+        <div class="col-md-4 pull-left">
+            Выполнение теста
+        </div>
+        <div class="col-md-4 text-center -bold">
+            {% if minutes >= 0 and seconds >= 0 %}
+                {{ minutes|stringformat:"02d" }}:{{ seconds|stringformat:"02d" }}
+            {% elif task_left > 0 %}
+                Для завершения осталось {{ task_left }}.
+            {% endif %}
+        </div>
+        <div class="col-md-4 pull-right">
+            {% if item.unit.test.practice %}
+                <a href="{% url 'student_test_complete' item.unit.test.TID %}"
+                   class="btn btn-danger btn-sm dropdown-toggle waves-effect waves-light pull-right">
+                    Завершить
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="text-center h4">
+        {{ item.unit.module.topic.name }}
+        ({{ item.unit.order }}/{{ item.unit.test.units.count }})
+    </div>
+    <div class="col-md-4 m-0">
+        {% if item.valid %}
+            <div class="panel h2 text-success p-b-10 p-t-10 col-md-8 text-center">Молодец, верно!</div>
+            <div class="col-md-8 m-t-20">
+            <a href="{% url 'student_item_right' item.IID %}" class="btn btn-primary"> Продолжить! </a>
+            </div>
+        {% else %}
+            <div class="panel h2 text-danger p-b-10 p-t-10 col-md-4 text-center">Ошибка</div>
+            <div class="col-md-12 m-t-20">
+                <a href="{% url 'student_item_clear' item.IID %}" class="btn btn-primary"> Ошибка понятна </a>
+            </div>
+            <div class="col-md-12 m-t-10">
+                <a href="{% url 'student_item_unclear' item.IID %}" class="btn btn-primary"> Не понятно </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

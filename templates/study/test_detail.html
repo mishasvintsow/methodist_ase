@@ -1,0 +1,37 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Информация о тесте
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-4">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <td class="col-2"> {{ test.TID }}</td>
+                </tr>
+                <tr>
+                    <th> Ученик</th>
+                    <td> {{ test.student.user.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th> Статус</th>
+                    <td> {{ test.get_status_display }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container m-0 m-t-20">
+        {% if test.time_open is None %}
+            <a href="{% url 'test_units_update' test.TID %}" class="btn btn-primary"> Настроить тест </a>
+            <a href="{% url 'test_units_edit' test.TID %}" class="btn btn-primary"> Редактировать список тем </a>
+            <a href="{% url 'test_open' test.TID %}" class="btn btn-warning"> Открыть тест </a>
+        {% endif %}
+    </div>
+{% endblock %}

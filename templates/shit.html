@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>        <table class="table table-sm">
+            <colgroup>
+                <col style="width:10%">
+                <col style="width:70%">
+                <col style="width:10%">
+                <col style="width:10%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th> code</th>
+                <th> name</th>
+                <th> grade</th>
+                <th> delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for topic_form, instance in formset|zip:instances %}
+                {% if topic_form.errors %}
+                    <tr>
+                        <td> {% for e in topic_form.non_field_errors %} {{ e }} {% endfor %}</td>
+                    </tr>
+                {% endif %}
+                {% if instance is not None %}
+                    <tr class="{% if instance.code == topic_form.initial.code and instance.name == topic_form.initial.name and instance.grade == topic_form.initial.grade %} greenlight {% else %} redlight {% endif %}"
+                        style="border-bottom-style: hidden">
+                        <td>
+                            <text>{{ instance.code }} </text>
+                        </td>
+                        <td>
+                            <text>{{ instance.name }}</text>
+                        </td>
+                        <td>
+                            <text>{{ instance.grade }}</text>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr class="graylight" style="border-bottom-style: hidden">
+                        <td>{{ topic_form.initial.code }}</td>
+                        <td> тема с таким кодом не найдена</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+                <tr class="{% if instance is None %} graylight {% elif instance.code == topic_form.initial.code and instance.name == topic_form.initial.name and instance.grade == topic_form.initial.grade %} greenlight {% else %} redlight {% endif %}">
+                    {% for field in topic_form %}
+                        {% include 'bootstrap/field.html' with tag="td" form_show_labels=False %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table></title>
+</head>
+<body>
+
+</body>
+</html>

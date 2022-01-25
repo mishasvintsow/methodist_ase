@@ -1,0 +1,273 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Информация о модуле
+    <a href="{% url 'module_make_plots' module.MID %}"
+       class="btn btn-info btn-sm dropdown-toggle waves-effect waves-light pull-right">
+        <i class="fa fa-refresh"></i>
+        Обновить графики
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Общая информация</div>
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-2"> Код</th>
+                    <td class="col-2"> {{ module.MID }}</td>
+                </tr>
+                <tr>
+                    <th> Ученик</th>
+                    <td> {{ module.student.user.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th> Тема</th>
+                    <td> {{ module.topic.name }}</td>
+                </tr>
+                <tr>
+                    <th> Статус</th>
+                    <td> {{ module.get_status_display }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Изучение: прогресс</div>
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-md-5"> процент разобранных групп заданий по теме</th>
+                    <td class="col-md-1"> {{ module.moduleparam.LPEG|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> процент разобранных заданий от всех</th>
+                    <td> {{ module.moduleparam.LPET|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> процент правильных от разобранных</th>
+                    <td> {{ module.moduleparam.LPRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th class="col-1"> Группа</th>
+                    <th class="col-6"> Заданий в группе</th>
+                    <th class="col-4"> Разобрано</th>
+                    <th class="col-2"> Доля разобранных</th>
+                    <th class="col-2"> Попыток</th>
+                    <th class="col-2"> Успешных попыток</th>
+                    <th class="col-2"> Процент правильных</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for group, params in module.moduleparam.LGPT %}
+                    <tr>
+                        <td> {{ group }} </td>
+                        {% for k,param in params %}
+                            <td> {{ param }} </td>
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td> -</td>
+                        <td> -</td>
+                        <td> -</td>
+                        <td> -</td>
+                        <td> -</td>
+                        <td> -</td>
+                        <td> -</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5 text-center">
+            {% if module.moduleparam.get_plot_DCR is not None %}
+                <img src="{% static module.moduleparam.get_plot_DCR %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+                <div>*вычисляется по всем заданиям как из "изучения", так и из "практики"</div>
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Практика: показатели правильности</div>
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-md-5"> процент правильных из ВСЕХ заданий разобранных по данной теме</th>
+                    <td class="col-md-1"> {{ module.moduleparam.RPRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> процент правильных заданий по данной теме В ПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.last_unit_RPRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> процент правильных заданий по данной теме В ПРЕДПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.prevlast_unit_RPRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5 text-center">
+            {% if module.moduleparam.get_plot_RPRT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RPRT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Практика: показатели сложности</div>
+            <table class="table table-sm table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-md-5"> средняя сложность среди ВСЕХ разобранных заданий</th>
+                    <td class="col-md-1"> {{ module.moduleparam.RMCAT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> средняя сложность среди ВСЕХ разобранных заданий В ПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.last_unit_RMCAT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> средняя сложность среди ВСЕХ разобранных заданий В ПРЕДПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.prevlast_unit_RMCAT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> средняя сложность среди ПРАВИЛЬНЫХ заданий</th>
+                    <td> {{ module.moduleparam.RMCRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> средняя сложность среди ПРАВИЛЬНЫХ заданий В ПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.last_unit_RMCRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> средняя сложность среди ПРАВИЛЬНЫХ заданий В ПРЕДПОСЛЕДНЕМ ТЕСТЕ</th>
+                    <td> {{ module.moduleparam.prevlast_unit_RMCRT|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> среднее значение среди 5 самых сложных ПРАВИЛЬНЫХ заданий</th>
+                    <td> {{ module.moduleparam.RMCR5T|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5 text-center">
+            {% if module.moduleparam.get_plot_RMCAT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCAT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+            {% if module.moduleparam.get_plot_RMCRT is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCRT %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+        </div>
+    </div>
+    <hr/>
+    <div class="container m-0">
+        <div class="col-md-7">
+            <div class="h2"> Практика: смешанные показатели</div>
+            <table class="table table-sm table-borderless">
+                <tbody>
+                <tr>
+                    <th class="col-md-5"> отношение суммы сложностей правильных к сумме сложностей ВСЕХ заданий
+                        разобранных по данной теме
+                    </th>
+                    <td class="col-md-1"> {{ module.moduleparam.RRCRtoCA|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> отношение суммы сложностей правильных к сумме сложностей заданий по данной теме В ПОСЛЕДНЕМ
+                        ТЕСТЕ
+                    </th>
+                    <td> {{ module.moduleparam.last_unit_RRCRtoCA|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> отношение суммы сложностей правильных к сумме сложностей заданий по данной теме В ПРЕДПОСЛЕДНЕМ
+                        ТЕСТЕ
+                    </th>
+                    <td> {{ module.moduleparam.prevlast_unit_RRCRtoCA|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> произведение средней сложности ВСЕХ на процент правильных из ВСЕХ разобранных по данной теме
+                    </th>
+                    <td> {{ module.moduleparam.RMCAtoPR|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> произведение средней сложности ВСЕХ на процент правильных из ВСЕХ разобранных по данной теме В
+                        ПОСЛЕДНЕМ ТЕСТЕ
+                    </th>
+                    <td> {{ module.moduleparam.last_unit_RMCAtoPR|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th> произведение средней сложности ВСЕХ на процент правильных из ВСЕХ разобранных по данной теме В
+                        ПРЕДПОСЛЕДНЕМ ТЕСТЕ
+                    </th>
+                    <td> {{ module.moduleparam.prevlast_unit_RMCAtoPR|default_if_none:"-" }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5 text-center">
+            {% if module.moduleparam.get_plot_RRCRtoCA is not None %}
+                <img src="{% static module.moduleparam.get_plot_RRCRtoCA %}"
+                     class="img-fluid img-thumbnail m-t-10 m-b-10" style="width:70%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+            {% if module.moduleparam.get_plot_RMCAtoPR is not None %}
+                <img src="{% static module.moduleparam.get_plot_RMCAtoPR %}"
+                     class="img-fluid img-thumbnail m-t-10 m-b-10" style="width:70%">
+            {% else %}
+                <img src="{% static '/images/blank_plot.jpg' %}" class="img-fluid img-thumbnail m-t-10 m-b-10"
+                     style="width:70%">
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

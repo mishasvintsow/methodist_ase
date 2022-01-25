@@ -1,0 +1,55 @@
+{% extends "main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    Результаты теста #{{ test.TID }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="m-0">
+        {% for unit, items in units_items %}
+            <div class="h3"> {{ unit.module.topic.name }} [{{ unit.get_status_display }}]</div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="col-2"> #</th>
+                    <th class="col-2"> Задание</th>
+                    <th class="col-2"> Ответ</th>
+                    <th class="col-2"> Правильный ответ</th>
+                    <th class="col-2"> Результат</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td> {{ item.IID }} </td>
+                        <td>
+                            {% if item.task.image %}
+                                <div class="w-100"><img src="{{ item.task.image.url }}" class="img-fluid img-thumbnail">
+                                </div>
+                            {% else %}
+                                <div class="w-100"><img src="{% static '/images/blank.jpg' %}"
+                                                        class="img-fluid img-thumbnail">
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td> {{ item.response|default_if_none:"-" }} </td>
+                        <td> {{ item.task.get_answer }} </td>
+                        <td>
+                            {% if item.valid is None %}
+                                <i class="fa fa-3x fa-question text-warning" aria-hidden="true"></i>
+                            {% elif item.valid %}
+                                <i class="fa fa-3x fa-check text-success" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-3x fa-times text-danger" aria-hidden="true"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+{% endblock %}

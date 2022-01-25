@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block head %}
+    Загрузка excel-таблицы со списком тем
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-success"> Загрузить файл</button>
+        </form>
+    </div>
+
+    <div class="container m-t-20">
+        <table class="table table-sm">
+            <caption> Пример таблицы</caption>
+            <thead>
+            <tr>
+                <th> code</th>
+                <th> name</th>
+                <th> grade</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>Натуральные числа</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td> ...</td>
+                <td> ...</td>
+                <td> ...</td>
+            </tr>
+            </tbody>
+        </table>
+        Примечания:
+        <ul>
+            <li> Названия столбцов в файле должны в точности совпадать с "Примером таблицы"</li>
+            <li> Файл не должен содержать пустые строки</li>
+            <li> Представленные в Банке знаний темы начинаются с номера: {{ min_code }} </li>
+            <li> Представленные в Банке знаний темы заканчиваются на номере: {{ max_code }} </li>
+            <li> Во избежание ошибок используйте номера, не входящие в этот интервал</li>
+            <li> Названия тем должны быть уникальны (даже если темы в разных классах имеют схожие названия!)</li>
+            <li> Класс можно указать в промежутке 5-11</li>
+        </ul>
+    </div>
+{% endblock %}
